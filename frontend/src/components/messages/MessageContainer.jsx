@@ -1,25 +1,41 @@
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import useConversation from "../../zustand/useConversation";
 import MessageInput from "./MessageInput";
 import Messages from "./Messages";
 import { TiMessages } from "react-icons/ti";
 import { useAuthContext } from "../../context/AuthContext";
+import { MdVideoCall } from "react-icons/md";
 const MessageContainer = () => {
     // const noChatSelected = true;
     const { selectedConversation, setSelectedConversation } = useConversation();
+
+    // const navigate = useNavigate();
 
     useEffect(() => {
         //cleanup function (unmounts)
         return () => setSelectedConversation(null);
     }, [setSelectedConversation]);
+
+    const handleVideoCallClick = () => {
+        if (selectedConversation) {
+            const roomId = selectedConversation.fullName.replace(/\s+/g, '-');
+            window.open(`/room/${roomId}`, '_blank');
+        }
+    }
+
     return (
         <div className='md:min-w-[450px] flex flex-col'>
             {!selectedConversation ? (<NoChatSelected />) : (
                 <>
                     {/* Header */}
-                    <div className='bg-slate-500 px-4 py-2 mb-2'>
-                        <span className='label-text'>To:</span> <span className='text-gray-900 font-bold'>{selectedConversation.fullName}</span>
+                    <div className='bg-slate-500 px-4 py-2 mb-2 flex justify-between items-center'>
+                        <div>
+                            <span className='label-text'>To:</span> <span className='text-gray-900 font-bold'>{selectedConversation.fullName}</span>
+                        </div>
+                        <MdVideoCall className='text-2xl text-gray-900 cursor-pointer' onClick={handleVideoCallClick}/>
                     </div>
+
 
                     <Messages />
                     <MessageInput />
